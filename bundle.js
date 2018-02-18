@@ -2,8 +2,6 @@
 const GameObject = require('./GameObject')
 const _ = require('lodash')
 
-const { MIN_PARTICLE_SIZE, SIZE_MODIFIER } = require('./constants')
-
 module.exports = class FadingParticle extends GameObject {
   constructor(args) {
     super(args)
@@ -44,7 +42,7 @@ module.exports = class FadingParticle extends GameObject {
     const diffVec = Vector2(mouseLocation.x - this.location.x, mouseLocation.y - this.location.y)
     const angle = diffVec.angle() - (0.25 * Math.PI)//45 deg
     
-    let irisVector = Vector2(this.size * 0.25, this.size * 0.25)
+    let irisVector = Vector2(this.size * 0.22, this.size * 0.22)
     irisVector = irisVector.rotate(angle)
 
     let useThisVec = irisVector
@@ -52,8 +50,6 @@ module.exports = class FadingParticle extends GameObject {
     if (diffVec.lengthSq() < irisVector.lengthSq()) {
       useThisVec = diffVec
     }
-
-
 
     ctx.restore()
     ctx.save()
@@ -90,37 +86,64 @@ module.exports = class FadingParticle extends GameObject {
   update() {
   }
 }
-},{"./GameObject":3,"./constants":6,"lodash":8}],2:[function(require,module,exports){
-const Eye = require('./Eye')
-const MousePositionListener = require('./MousePositionListener')
+},{"./GameObject":4,"lodash":9}],2:[function(require,module,exports){
+const GameObject = require('./GameObject')
 const _ = require('lodash')
+const Eye = require('./Eye')
 
 const EYE_MAX_SIZE = 20
 const EYE_MIN_SIZE = 10
 
-function createScene () {
-
-  let eyeCount = 200
-
-  while(eyeCount--) {
-
-    instantiate(MousePositionListener)
-
-    instantiate(Eye, {
-      location: Vector2(
-        _.random(canvas.width),
-        _.random(canvas.height)
-      ),
-      size: _.random(EYE_MAX_SIZE) + EYE_MIN_SIZE,
-      irisSize: (Math.random() + 1 / 2) - 0.4 // Squeeze number between 0.3 and 0.6
-    })
+module.exports = class FadingParticle extends GameObject {
+  constructor(args) {
+    super(args)
+    this.eyes = []
+    this.click = this.click.bind(this)
+    this.spawnEyes = this.spawnEyes.bind(this)
+    canvas.addEventListener("click", this.click)
+    this.spawnEyes()
   }
+  click() {
+    this.destroyEyes()
+    this.spawnEyes()
+  }
+  destroyEyes() {
+    const eyeLength = this.eyes.length
+    for (let i = 0; i < eyeLength; i++) {
+      destroy(this.eyes[i])
+    }
+  }
+  spawnEyes() {
+    let eyeCount = 150
+
+    while (eyeCount--) {
+      const eye = instantiate(Eye, {
+        location: Vector2(
+          _.random(canvas.width),
+          _.random(canvas.height)
+        ),
+        size: _.random(EYE_MAX_SIZE) + EYE_MIN_SIZE,
+        irisSize: (Math.random() + 1 / 2) - 0.4 // Squeeze number between 0.3 and 0.6
+      })
+
+      this.eyes.push(eye)
+    }
+  }
+}
+},{"./Eye":1,"./GameObject":4,"lodash":9}],3:[function(require,module,exports){
+const EyeSpawner = require('./EyeSpawner')
+const MousePositionListener = require('./MousePositionListener')
+const _ = require('lodash')
+
+function createScene () {
+  instantiate(EyeSpawner)
+  instantiate(MousePositionListener)
 }
 
 module.exports = {
   createScene
 }
-},{"./Eye":1,"./MousePositionListener":4,"lodash":8}],3:[function(require,module,exports){
+},{"./EyeSpawner":2,"./MousePositionListener":5,"lodash":9}],4:[function(require,module,exports){
 const {
   getVelocity,
   getForce,
@@ -150,31 +173,31 @@ module.exports = class GameObject {
   render() {}
   update() {}
 }
-},{"./Physics":5}],4:[function(require,module,exports){
+},{"./Physics":6}],5:[function(require,module,exports){
 (function (global){
 const GameObject = require('./GameObject')
+const _ = require('lodash')
 
 module.exports = class MousePositionListener extends GameObject {
   constructor(args) {
     super(args)
-    global.mouseLocation = Vector2(canvas.width / 2, canvas.height / 2)
-
-    this.mouseDown = this.mouseDown.bind(this)
-    this.mouseMove = this.mouseMove.bind(this)
-
-    canvas.addEventListener("mousedown", this.mouseDown)
+    global.mouseLocation = Vector2(canvas.width / 2, canvas.height / 2) 
+    canvas.addEventListener("click", this.click)
     canvas.addEventListener("mousemove", this.mouseMove)
   }
   mouseMove(e) {
     mouseLocation.x = e.x
     mouseLocation.y = e.y
   }
-  mouseDown(e) {
-    // scream! and make background flash
+  click() {
+    var audios = [new Audio('zombie.ogg'), new Audio('zombie2.wav')]
+    // audios[Math.floor(Math.random() * audios.length)].play()
+
+    // render screen white and remake eyes
   }
 }
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./GameObject":3}],5:[function(require,module,exports){
+},{"./GameObject":4,"lodash":9}],6:[function(require,module,exports){
 const defaultAcceleration = 9.81
 const airDensity = 1.225 // kg/m3
 const circleDragCoefficient = 0.47
@@ -210,7 +233,7 @@ module.exports = {
     return degree / (180 / Math.PI)
   },
 }
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 const TARGET_FPS = 30
 const TARGET_FRAME_DURATION = (1000 / TARGET_FPS)
 
@@ -218,7 +241,7 @@ module.exports = {
   TARGET_FPS,
   TARGET_FRAME_DURATION,
 }
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 const { TARGET_FPS, TARGET_FRAME_DURATION } = require('./constants')
 
 function draw() {
@@ -249,7 +272,7 @@ function loop() {
 }
 
 module.exports = { loop }
-},{"./constants":6}],8:[function(require,module,exports){
+},{"./constants":7}],9:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -17337,7 +17360,7 @@ module.exports = { loop }
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (global){
 var os = require('os');
 
@@ -17477,7 +17500,7 @@ lib.all = function (callback) {
 module.exports = lib;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./lib/linux.js":10,"./lib/unix.js":11,"./lib/windows.js":12,"os":17}],10:[function(require,module,exports){
+},{"./lib/linux.js":11,"./lib/unix.js":12,"./lib/windows.js":13,"os":18}],11:[function(require,module,exports){
 var exec = require('child_process').exec;
 
 module.exports = function (iface, callback) {
@@ -17490,7 +17513,7 @@ module.exports = function (iface, callback) {
     });
 };
 
-},{"child_process":16}],11:[function(require,module,exports){
+},{"child_process":17}],12:[function(require,module,exports){
 var exec = require('child_process').exec;
 
 module.exports = function (iface, callback) {
@@ -17508,7 +17531,7 @@ module.exports = function (iface, callback) {
     });
 };
 
-},{"child_process":16}],12:[function(require,module,exports){
+},{"child_process":17}],13:[function(require,module,exports){
 var exec = require('child_process').exec;
 
 var regexRegex = /[-\/\\^$*+?.()|[\]{}]/g;
@@ -17538,7 +17561,7 @@ module.exports = function (iface, callback) {
     });
 };
 
-},{"child_process":16}],13:[function(require,module,exports){
+},{"child_process":17}],14:[function(require,module,exports){
 (function (process){
 /* 
 (The MIT License)
@@ -17579,7 +17602,7 @@ function macHandler(error){
 }
 
 }).call(this,require('_process'))
-},{"_process":18,"macaddress":9}],14:[function(require,module,exports){
+},{"_process":19,"macaddress":10}],15:[function(require,module,exports){
 exports = module.exports = Victor;
 
 /**
@@ -18905,7 +18928,7 @@ function degrees2radian (deg) {
 	return deg / degrees;
 }
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function (global){
 const _ = require('lodash')
 const GameObject = require('./GameObject')
@@ -18944,9 +18967,9 @@ createScene()
 loop()
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./EyesScene":2,"./GameObject":3,"./constants":6,"./loop":7,"lodash":8,"uniqid":13,"victor":14}],16:[function(require,module,exports){
+},{"./EyesScene":3,"./GameObject":4,"./constants":7,"./loop":8,"lodash":9,"uniqid":14,"victor":15}],17:[function(require,module,exports){
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -18997,7 +19020,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -19183,4 +19206,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[15]);
+},{}]},{},[16]);

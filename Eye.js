@@ -1,8 +1,6 @@
 const GameObject = require('./GameObject')
 const _ = require('lodash')
 
-const { MIN_PARTICLE_SIZE, SIZE_MODIFIER } = require('./constants')
-
 module.exports = class FadingParticle extends GameObject {
   constructor(args) {
     super(args)
@@ -43,7 +41,7 @@ module.exports = class FadingParticle extends GameObject {
     const diffVec = Vector2(mouseLocation.x - this.location.x, mouseLocation.y - this.location.y)
     const angle = diffVec.angle() - (0.25 * Math.PI)//45 deg
     
-    let irisVector = Vector2(this.size * 0.25, this.size * 0.25)
+    let irisVector = Vector2(this.size * 0.22, this.size * 0.22)
     irisVector = irisVector.rotate(angle)
 
     let useThisVec = irisVector
@@ -51,8 +49,6 @@ module.exports = class FadingParticle extends GameObject {
     if (diffVec.lengthSq() < irisVector.lengthSq()) {
       useThisVec = diffVec
     }
-
-
 
     ctx.restore()
     ctx.save()
