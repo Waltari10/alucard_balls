@@ -25,7 +25,8 @@ module.exports = class FadingParticle extends GameObject {
     }
   }
   spawnEyes() {
-    let eyeCount = 150
+    let eyeCount = Math.floor((canvas.height * canvas.width) / 8000)
+    if (eyeCount < 10) eyeCount = 10
 
     while (eyeCount--) {
       const eye = instantiate(Eye, {
