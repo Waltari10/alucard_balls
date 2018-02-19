@@ -23,6 +23,7 @@ module.exports = class FadingParticle extends GameObject {
     for (let i = 0; i < eyeLength; i++) {
       destroy(this.eyes[i])
     }
+    this.eyes = []
   }
   spawnEyes() {
     let eyeCount = Math.floor((canvas.height * canvas.width) / 8000)

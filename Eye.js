@@ -31,13 +31,6 @@ module.exports = class FadingParticle extends GameObject {
     ctx.fill()
     ctx.stroke()
 
-
-    // mouselocation
-
-    // TODO move iris within the eyes parameters towards mouseLocation
-    // The distance should be scaled depending on eye size
-    // Calculate direction(angle) and then calculate amount in that direction (Something times size)
-
     const diffVec = Vector2(mouseLocation.x - this.location.x, mouseLocation.y - this.location.y)
     const angle = diffVec.angle() - (0.25 * Math.PI)//45 deg
     
@@ -81,7 +74,5 @@ module.exports = class FadingParticle extends GameObject {
     ctx.stroke()
     ctx.restore()
 
-  }
-  update() {
   }
 }
