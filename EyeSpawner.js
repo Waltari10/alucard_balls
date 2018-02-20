@@ -2,7 +2,7 @@ const GameObject = require('./GameObject')
 const _ = require('lodash')
 const Eye = require('./Eye')
 
-const EYE_MAX_SIZE = 15
+const EYE_MAX_SIZE = 20
 const EYE_MIN_SIZE = 10
 
 module.exports = class FadingParticle extends GameObject {
@@ -109,7 +109,6 @@ module.exports = class FadingParticle extends GameObject {
 
         // Try x times to fit eye into canvas randomly
         if (i > 100000) break
-        
 
         x = _.random(canvas.width)
         y = _.random(canvas.height)
