@@ -108,6 +108,7 @@ module.exports = class FadingParticle extends GameObject {
         i++
 
         // Try x times to fit eye into canvas randomly
+        // This is a surprisingly bad approach
         if (i > 100000) break
 
         x = _.random(canvas.width)
