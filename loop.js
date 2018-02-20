@@ -1,7 +1,6 @@
 const { TARGET_FPS, TARGET_FRAME_DURATION } = require('./constants')
 
 function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
   ctx.fillStyle = 'black'
   ctx.fillRect(0,0,canvas.width, canvas.height)
   for (const key in gameObjects) {
@@ -18,6 +17,7 @@ function updateGameObjects() {
 
 function loop() {
   const startTime = Date.now()
+  // ctx.clearRect(0, 0, canvas.width, canvas.height)
   updateGameObjects()
   draw()
   const renderTime = Date.now() - startTime
